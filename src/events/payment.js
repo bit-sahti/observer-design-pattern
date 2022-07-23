@@ -1,11 +1,11 @@
-export class Payment {
-    constructor(paymentSubject) {
-        this.paymentSubject = paymentSubject
-    }
+export class PaymentEvent {
+  constructor(PaymentReporter) {
+    this.PaymentReporter = PaymentReporter
+  }
 
-    creditCard(paymentData) {
-        console.log(`\na payment from ${paymentData.userName} has ocurred`)
+  creditCard(paymentData) {
+    console.log(`\na payment from ${paymentData.userName} has ocurred`)
 
-        this.paymentSubject.notify(paymentData)
-    }
+    this.PaymentReporter.notify(paymentData)
+  }
 }

@@ -1,82 +1,82 @@
 import { jest } from '@jest/globals'
 
-import { PaymentSubject } from "../src/subjects/paymentSubjects.js"
-import { Payment } from "../src/events/payment.js"
-import { Marketing } from '../src/observers/marketing.js'
-import { Logistic } from '../src/observers/logistics.js'
+import { Marketing } from '../src/subscribers/marketing.js'
+import { Logistic } from '../src/subscribers/logistics.js'
+import { PaymentReporter } from '../src/reporters/payment.js'
+import { PaymentEvent } from '../src/events/payment.js'
 
 describe('Observer Pattern test suite', () => {
-    it('#Payment Subject -> should notify observers', () => {
-        const subject = new PaymentSubject()
+  it('#PaymentEvent reporter -> should notify observers', () => {
+    const reporter = new PaymentReporter()
 
-        const observer = {
-            update: jest.fn()
-        }
+    const observer = {
+      update: jest.fn(),
+    }
 
-        const data = 'hey'
+    const data = 'hey'
 
-        subject.subscribe(observer)
-        subject.notify(data)
+    reporter.subscribe(observer)
+    reporter.notify(data)
 
-        expect(observer.update).toHaveBeenCalled()
-    })
+    expect(observer.update).toHaveBeenCalled()
+  })
 
-    it('#Payment Subject -> should not notify unsubscribed observers', () => {
-        const subject = new PaymentSubject()
+  it('#PaymentEvent reporter -> should not notify unsubscribed observers', () => {
+    const reporter = new PaymentReporter()
 
-        const observer = {
-            update: jest.fn()
-        }
+    const observer = {
+      update: jest.fn(),
+    }
 
-        const data = 'hey'
+    const data = 'hey'
 
-        subject.subscribe(observer)
-        subject.unsubscribe(observer)
-        subject.notify(data)
+    reporter.subscribe(observer)
+    reporter.unsubscribe(observer)
+    reporter.notify(data)
 
-        expect(observer.update).not.toHaveBeenCalled()
-    })
+    expect(observer.update).not.toHaveBeenCalled()
+  })
 
-    it('#Payment Subject -> should notify subjects after a credit card transaction', () => {
-        const subject = new PaymentSubject()
-        const payment = new Payment(subject)
+  it('#PaymentEvent reporter -> should notify reporters after a credit card transaction', () => {
+    const reporter = new PaymentReporter()
+    const payment = new PaymentEvent(reporter)
 
-        const paymentSubjectNotifierSpy = jest.spyOn(
-            payment.paymentSubject,
-            payment.paymentSubject.notify.name
-        )
+    const PaymentReporterNotifierSpy = jest.spyOn(
+      payment.PaymentReporter,
+      payment.PaymentReporter.notify.name
+    )
 
-        const data = {
-            id: Date.now(),
-            userName: 'Thais'
-        }
+    const data = {
+      id: Date.now(),
+      userName: 'Thais',
+    }
 
-        payment.creditCard(data)
+    payment.creditCard(data)
 
-        expect(paymentSubjectNotifierSpy).toHaveBeenCalledWith(data)
-    })
+    expect(PaymentReporterNotifierSpy).toHaveBeenCalledWith(data)
+  })
 
-    it('#All -> should notify all subscribers after a credit card payment', () => {
-        const subject = new PaymentSubject()
-        const marketing = new Marketing()
-        const logistic = new Logistic()
+  it('#All -> should notify all subscribers after a credit card payment', () => {
+    const reporter = new PaymentReporter()
+    const marketing = new Marketing()
+    const logistic = new Logistic()
 
-        const marketingUpdateSpy = jest.spyOn(marketing, marketing.update.name)
-        const logisticUpdateSpy = jest.spyOn(logistic, logistic.update.name)
+    const marketingUpdateSpy = jest.spyOn(marketing, marketing.update.name)
+    const logisticUpdateSpy = jest.spyOn(logistic, logistic.update.name)
 
-        subject.subscribe(logistic)
-        subject.subscribe(marketing)
+    reporter.subscribe(logistic)
+    reporter.subscribe(marketing)
 
-        const payment = new Payment(subject)
+    const payment = new PaymentEvent(reporter)
 
-        const data = {
-            id: Date.now(),
-            userName: 'Thais'
-        }
-        
-        payment.creditCard(data)
+    const data = {
+      id: Date.now(),
+      userName: 'Thais',
+    }
 
-        expect(marketingUpdateSpy).toHaveBeenCalledWith(data)
-        expect(logisticUpdateSpy).toHaveBeenCalledWith(data)
-    })
+    payment.creditCard(data)
+
+    expect(marketingUpdateSpy).toHaveBeenCalledWith(data)
+    expect(logisticUpdateSpy).toHaveBeenCalledWith(data)
+  })
 })

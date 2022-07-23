@@ -2,6 +2,8 @@ import { jest } from '@jest/globals'
 
 import { PaymentSubject } from "../src/subjects/paymentSubjects.js"
 import { Payment } from "../src/events/payment.js"
+import { Marketing } from '../src/observers/marketing.js'
+import { Logistic } from '../src/observers/logistics.js'
 
 describe('Observer Pattern test suite', () => {
     it('#Payment Subject -> should notify observers', () => {
@@ -53,6 +55,28 @@ describe('Observer Pattern test suite', () => {
 
         expect(paymentSubjectNotifierSpy).toHaveBeenCalledWith(data)
     })
-    
-    it.todo('#All -> should notify subscribers after a credit card payment')
+
+    it('#All -> should notify all subscribers after a credit card payment', () => {
+        const subject = new PaymentSubject()
+        const marketing = new Marketing()
+        const logistic = new Logistic()
+
+        const marketingUpdateSpy = jest.spyOn(marketing, marketing.update.name)
+        const logisticUpdateSpy = jest.spyOn(logistic, logistic.update.name)
+
+        subject.subscribe(logistic)
+        subject.subscribe(marketing)
+
+        const payment = new Payment(subject)
+
+        const data = {
+            id: Date.now(),
+            userName: 'Thais'
+        }
+        
+        payment.creditCard(data)
+
+        expect(marketingUpdateSpy).toHaveBeenCalledWith(data)
+        expect(logisticUpdateSpy).toHaveBeenCalledWith(data)
+    })
 })

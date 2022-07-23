@@ -5,6 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "dev": "nodemon src",
+    "start": "node src",
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand --watch --silent --config ./jest.config.js",
     "test:cov": "NODE_OPTIONS=--experimental-vm-modules npx jest --config ./jest.config.js --coverage --silent"
   },
